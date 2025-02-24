@@ -20,6 +20,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'cliente',
         ]);
 
         return response()->json(['message' => 'Usuario registrado con éxito', 'user' => $user]);
@@ -51,5 +52,14 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response()->json($request->user());
+    }
+
+    public function test(){
+        $user = User::find(1);
+        if ($user->isAdmin()) {
+            return response()->json(['msg'=>"El usuario es administrador"]);
+        } else {
+            return response()->json(['msg'=>"El usuario es cliente"]);
+        }
     }
 }
