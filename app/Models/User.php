@@ -58,6 +58,6 @@ class User extends Authenticatable
 
     public function isClient()
     {
-        return $this->role === 'cliente';
+        return $this->role === self::ROLE_CLIENTE;
     }
 }

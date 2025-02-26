@@ -1,20 +1,33 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+//Registro sin necesidad de estar autenticado.
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/hola', [AuthController::class, 'test']);
 
+Route::post('/products', [ProductController::class, 'store']);
+    Route::get('/products', [ProductController::class, 'index']); // Listar todos los productos
+    Route::get('/products/{id}', [ProductController::class, 'show']); // Ver un producto
+    Route::put('/products/{id}', [ProductController::class, 'update']); // Actualizar
+    Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+
+
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/admin/dashboard', function () {
-        return response()->json(['message' => 'Bienvenido al panel de administrador']);
-    });
+    //Productos
+    // Route::post('/products', [ProductController::class, 'store']);
+    // Route::get('/products', [ProductController::class, 'index']); // Listar todos los productos
+    // Route::get('/products/{id}', [ProductController::class, 'show']); // Ver un producto
+    // Route::put('/products/{id}', [ProductController::class, 'update']); // Actualizar
+    // Route::delete('/products/{id}', [ProductController::class, 'destroy']); // Eliminar
+    
 });
 
 // Route::get('/user', function (Request $request) {
