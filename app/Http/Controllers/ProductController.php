@@ -33,10 +33,17 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|string',
+            'images' => 'nullable|array',
+            'images.*' => 'url', // Cada imagen debe ser una URL válida
         ]);
 
-        $product = Product::create($request->all());
+        $product = Product::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'images' => $request->images ?? [], // Guardar como array vacío si no hay imágenes
+        ]);
 
         return response()->json(['message' => 'Producto creado con éxito', 'product' => $product], 201);
     }
@@ -79,13 +86,12 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'sometimes|required|numeric|min:0',
             'stock' => 'sometimes|required|integer|min:0',
-            'image' => 'nullable|string',
+            'images' => 'nullable|array',
+            'images.*' => 'url',
         ]);
 
-        //dd($request->all());
         $product->update($request->all());
         $product->save();
-
 
         return response()->json(['message' => 'Producto actualizado con éxito', 'product' => $product]);
     }
