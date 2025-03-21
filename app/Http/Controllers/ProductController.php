@@ -28,13 +28,14 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        try {
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'images' => 'nullable|array',
-            'images.*' => 'url', // Cada imagen debe ser una URL válida
+            'imageUrls' => 'nullable|array',
+            'imageUrls.*.url' => 'nullable|url', // Cada imagen debe ser una URL válida
         ]);
 
         $product = Product::create([
@@ -42,10 +43,21 @@ class ProductController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'stock' => $request->stock,
-            'images' => $request->images ?? [], // Guardar como array vacío si no hay imágenes
+            'images' => collect($request->imageUrls)->pluck('url')->toArray(), // Guardar como array vacío si no hay imágenes
         ]);
 
         return response()->json(['message' => 'Producto creado con éxito', 'product' => $product], 201);
+        }catch(\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Error de validación',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al crear el producto',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -86,11 +98,17 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'sometimes|required|numeric|min:0',
             'stock' => 'sometimes|required|integer|min:0',
-            'images' => 'nullable|array',
-            'images.*' => 'url',
+            'imageUrls' => 'nullable|array',
+            'imageUrls.*.url' => 'nullable|url',
         ]);
 
-        $product->update($request->all());
+        $product->fill($request->only(['name', 'description', 'price', 'stock']));
+
+        // Si se envían imágenes, actualizar el campo de imágenes
+        if ($request->has('imageUrls')) {
+            $product->images = collect($request->imageUrls)->pluck('url')->toArray();
+        }
+
         $product->save();
 
         return response()->json(['message' => 'Producto actualizado con éxito', 'product' => $product]);
