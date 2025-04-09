@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ Route::get('/products', [ProductController::class, 'index']); // Listar todos lo
 Route::get('/products/{id}', [ProductController::class, 'show']); // Ver un producto
 Route::put('/products/{id}', [ProductController::class, 'update']); // Actualizar
 Route::delete('/products/{id}', [ProductController::class, 'destroy']);
-
+Route::post('/orders', [OrderController::class, 'store']);
+Route::get('/orders/history', [OrderController::class, 'history']); 
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user', [AuthController::class, 'user']);
@@ -27,7 +29,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // Route::get('/products/{id}', [ProductController::class, 'show']); // Ver un producto
     // Route::put('/products/{id}', [ProductController::class, 'update']); // Actualizar
     // Route::delete('/products/{id}', [ProductController::class, 'destroy']); // Eliminar
-    
+    // Route::post('/orders', [OrderController::class, 'store']);
+    // Route::get('/orders/history', [OrderController::class, 'history']); 
 });
 
 // Route::get('/user', function (Request $request) {
