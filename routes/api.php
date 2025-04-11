@@ -13,7 +13,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/hola', [AuthController::class, 'test']);
 
 // Route::post('/products', [ProductController::class, 'store']);
-// Route::get('/products', [ProductController::class, 'index']); // Listar todos los productos
+Route::get('/products', [ProductController::class, 'index']); // Listar todos los productos
 // Route::get('/products/{id}', [ProductController::class, 'show']); // Ver un producto
 // Route::put('/products/{id}', [ProductController::class, 'update']); // Actualizar
 // Route::delete('/products/{id}', [ProductController::class, 'destroy']);
@@ -25,12 +25,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     //Productos
     Route::post('/products', [ProductController::class, 'store']);
-    Route::get('/products', [ProductController::class, 'index']); // Listar todos los productos
+    // Listar todos los productos
     Route::get('/products/{id}', [ProductController::class, 'show']); // Ver un producto
     Route::put('/products/{id}', [ProductController::class, 'update']); // Actualizar
     Route::delete('/products/{id}', [ProductController::class, 'destroy']); // Eliminar
+    //Orders
     Route::post('/orders', [OrderController::class, 'store']);
-    Route::get('/orders/history', [OrderController::class, 'history']); 
+    Route::get('/orders', [OrderController::class, 'index']); 
 });
 
 // Route::get('/user', function (Request $request) {

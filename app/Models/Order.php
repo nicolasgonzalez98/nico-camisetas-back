@@ -15,9 +15,15 @@ class Order extends Model
         'address',
         'items',
         'total',
+        'user_id'
     ];
 
     protected $casts = [
         'items' => 'array',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

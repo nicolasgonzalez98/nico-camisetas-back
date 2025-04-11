@@ -20,15 +20,22 @@ class OrderController extends Controller
             'total' => 'required|numeric|min:0',
         ]);
 
-        $order = Order::create($validated);
+        $order = Order::create([
+            'user_id' => $request->user()->id, // <- este valor
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'address' => $validated['address'],
+            'total' => $validated['total'],
+            'items' => $validated['items'], 
+        ]);
 
         return response()->json(['message' => 'Orden creada con éxito', 'order' => $order], 201);
     }
 
-    public function history(Request $request)
+    public function index(Request $request)
     {
-        return response()->json(
-            $request->user()->orders()->with('items.product')->latest()->get()
-        );
+        $orders = $request->user()->orders()->with('items.product')->latest()->get();
+
+        return response()->json($orders);
     }
 }
