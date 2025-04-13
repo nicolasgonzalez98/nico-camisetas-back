@@ -31,7 +31,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::delete('/products/{id}', [ProductController::class, 'destroy']); // Eliminar
     //Orders
     Route::post('/orders', [OrderController::class, 'store']);
-    Route::get('/orders', [OrderController::class, 'index']); 
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::post('/orders/{order}/confirm', [OrderController::class, 'confirm']);
 });
 
 // Route::get('/user', function (Request $request) {

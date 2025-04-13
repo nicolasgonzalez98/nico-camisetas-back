@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -34,8 +35,34 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        $orders = $request->user()->orders()->with('items.product')->latest()->get();
+        $orders = $request->user()->orders()->latest()->get();
+
+        $orders->transform(function ($order) {
+            $order->products = collect($order->items)->map(function ($item) {
+                $product = Product::find($item['product_id']);
+
+                if (!$product) return null;
+
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'price' => $product->price,
+                    'quantity' => $item['quantity'],
+                ];
+            })->filter(); // Saca los nulos si un producto no existe
+
+            return $order;
+        });
 
         return response()->json($orders);
     }
+
+    public function confirm(Order $order)
+    {
+        $order->status = 'confirmed';
+        $order->save();
+
+        return response()->json(['message' => 'Orden confirmada con éxito.', 'order' => $order]);
+    }
+
 }
