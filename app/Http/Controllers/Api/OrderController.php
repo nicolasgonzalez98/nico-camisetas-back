@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
+use App\Notifications\OrderConfirmed;
+use App\Notifications\OrderPlaced;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -29,6 +31,8 @@ class OrderController extends Controller
             'total' => $validated['total'],
             'items' => $validated['items'], 
         ]);
+
+        $request->user()->notify(new OrderPlaced($order));
 
         return response()->json(['message' => 'Orden creada con éxito', 'order' => $order], 201);
     }
@@ -61,6 +65,8 @@ class OrderController extends Controller
     {
         $order->status = 'confirmed';
         $order->save();
+
+        $order->user->notify(new OrderConfirmed($order));
 
         return response()->json(['message' => 'Orden confirmada con éxito.', 'order' => $order]);
     }
